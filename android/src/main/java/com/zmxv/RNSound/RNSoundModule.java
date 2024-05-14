@@ -2,6 +2,7 @@ package com.zmxv.RNSound;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.media.AudioDeviceInfo;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
@@ -95,6 +96,13 @@ public class RNSoundModule extends ReactContextBaseJavaModule implements AudioMa
           category = AudioManager.STREAM_ALARM;
           break;
         default:
+          AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+          if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            AudioDeviceInfo btDevice = audioManager.getCommunicationDevice();
+            if (btDevice != null && btDevice.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_SCO) {
+              category = AudioManager.STREAM_VOICE_CALL;
+            }
+          }
           Log.e("RNSoundModule", String.format("Unrecognised category %s", module.category));
           break;
       }
@@ -495,3 +503,4 @@ public class RNSoundModule extends ReactContextBaseJavaModule implements AudioMa
     // Keep: Required for RN built in Event Emitter Calls.
   }
 }
+

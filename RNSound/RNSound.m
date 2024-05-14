@@ -1,10 +1,6 @@
 #import "RNSound.h"
 
-#if __has_include("RCTUtils.h")
-#import "RCTUtils.h"
-#else
 #import <React/RCTUtils.h>
-#endif
 
 @implementation RNSound {
     NSMutableDictionary *_playerPool;
@@ -21,19 +17,19 @@
         [userInfo[@"AVAudioSessionInterruptionTypeKey"] longValue];
     AVAudioPlayer *player = [self playerForKey:self._key];
     if (audioSessionInterruptionType == AVAudioSessionInterruptionTypeEnded) {
-        if (player) {
+        if (player && player.isPlaying) {
             [player play];
             [self setOnPlay:YES forPlayerKey:self._key];
         }
     }
-    else if (audioSessionRouteChangeReason ==
+    if (audioSessionRouteChangeReason ==
         AVAudioSessionRouteChangeReasonOldDeviceUnavailable) {
         if (player) {
             [player pause];
             [self setOnPlay:NO forPlayerKey:self._key];
         }
     }
-    else if (audioSessionInterruptionType == AVAudioSessionInterruptionTypeBegan) {
+    if (audioSessionInterruptionType == AVAudioSessionInterruptionTypeBegan) {
         if (player) {
             [player pause];
             [self setOnPlay:NO forPlayerKey:self._key];
@@ -176,10 +172,14 @@ RCT_EXPORT_METHOD(setCategory
         if (mixWithOthers) {
             [session setCategory:category
                      withOptions:AVAudioSessionCategoryOptionMixWithOthers |
-                                 AVAudioSessionCategoryOptionAllowBluetooth
+                                 AVAudioSessionCategoryOptionAllowBluetooth |
+                                    AVAudioSessionCategoryOptionDefaultToSpeaker
                            error:nil];
         } else {
-            [session setCategory:category error:nil];
+            [session setCategory:category
+                     withOptions:AVAudioSessionCategoryOptionAllowBluetooth |
+                                AVAudioSessionCategoryOptionDefaultToSpeaker
+                           error:nil];
         }
     }
 }
@@ -245,12 +245,7 @@ RCT_EXPORT_METHOD(play
         addObserver:self
            selector:@selector(audioSessionChangeObserver:)
                name:AVAudioSessionRouteChangeNotification
-             object:[AVAudioSession sharedInstance]];
-    [[NSNotificationCenter defaultCenter]
-        addObserver:self
-           selector:@selector(audioSessionChangeObserver:)
-               name:AVAudioSessionInterruptionNotification
-             object:[AVAudioSession sharedInstance]];
+             object:nil];
     self._key = key;
     AVAudioPlayer *player = [self playerForKey:key];
     if (player) {
