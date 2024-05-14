@@ -1,10 +1,10 @@
 {
-  "name": "react-native-sound",
-  "version": "0.11.2",
-  "description": "React Native module for playing sound clips on iOS, Android, and Windows",
+  "name": "@voiceadventures/react-native-sound",
+  "version": "0.12.1",
+  "description": "Fork of React Native module for playing sound clips on iOS, Android, and Windows",
   "main": "sound.js",
   "typings": "index.d.ts",
-  "repository": "zmxv/react-native-sound",
+  "repository": "voice-adventures/react-native-sound",
   "keywords": [
     "react-native",
     "sound",
@@ -13,7 +13,7 @@
     "android",
     "windows"
   ],
-  "author": "Zhen Wang <z@zmxv.com> (http://blog.zmxv.com)",
+  "author": "Alex Lerman",
   "license": "MIT",
   "peerDependencies": {
     "react-native": ">=0.8.0"
